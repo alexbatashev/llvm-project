@@ -1,5 +1,6 @@
 // RUN: %clang_cc1 -DUSE_64 -triple x86_64-unknown-unknown -target-feature +fxsr -target-feature +avx -target-feature +xsaveopt -target-feature +xsaves -target-feature +xsavec -target-feature +mwaitx -target-feature +clzero -target-feature +shstk -target-feature +wbnoinvd -target-feature +cldemote -emit-llvm -o %t %s
 // RUN: %clang_cc1 -DUSE_ALL -triple x86_64-unknown-unknown -target-feature +fxsr -target-feature +avx -target-feature +xsaveopt -target-feature +xsaves -target-feature +xsavec -target-feature +mwaitx -target-feature +shstk -target-feature +clzero -target-feature +wbnoinvd -target-feature +cldemote -fsyntax-only -o %t %s
+// RUN: %clang_cc1 -DUSE_64 -DOPENCL -cl-std=CL2.0 -triple x86_64-unknown-unknown -target-feature +fxsr -target-feature +avx -target-feature +xsaveopt -target-feature +xsaves -target-feature +xsavec -target-feature +mwaitx -target-feature +clzero -target-feature +shstk -target-feature +wbnoinvd -target-feature +cldemote -emit-llvm -o %t %s
 
 #ifdef USE_ALL
 #define USE_3DNOW
@@ -11,7 +12,11 @@
 typedef char V8c __attribute__((vector_size(8 * sizeof(char))));
 typedef signed short V4s __attribute__((vector_size(8)));
 typedef signed int V2i __attribute__((vector_size(8)));
+#ifndef OPENCL
 typedef signed long long V1LLi __attribute__((vector_size(8)));
+#else
+typedef signed long V1LLi __attribute__((vector_size(8)));
+#endif
 
 typedef float V2f __attribute__((vector_size(8)));
 
@@ -19,7 +24,11 @@ typedef float V2f __attribute__((vector_size(8)));
 typedef char V16c __attribute__((vector_size(16)));
 typedef signed short V8s __attribute__((vector_size(16)));
 typedef signed int V4i __attribute__((vector_size(16)));
+#ifndef OPENCL
 typedef signed long long V2LLi __attribute__((vector_size(16)));
+#else
+typedef signed long V2LLi __attribute__((vector_size(16)));
+#endif
 
 typedef float V4f __attribute__((vector_size(16)));
 typedef double V2d __attribute__((vector_size(16)));
@@ -27,7 +36,11 @@ typedef double V2d __attribute__((vector_size(16)));
 // 256-bit
 typedef char V32c __attribute__((vector_size(32)));
 typedef signed int V8i __attribute__((vector_size(32)));
+#ifndef OPENCL
 typedef signed long long V4LLi __attribute__((vector_size(32)));
+#else
+typedef signed long V4LLi __attribute__((vector_size(32)));
+#endif
 
 typedef double V4d __attribute__((vector_size(32)));
 typedef float  V8f __attribute__((vector_size(32)));
@@ -41,21 +54,30 @@ void f0() {
 #endif
   signed int          tmp_i;
   unsigned int        tmp_Ui;
+#ifndef OPENCL
   signed long long    tmp_LLi;
   unsigned long long  tmp_ULLi;
+#else
+  signed long         tmp_LLi;
+  unsigned long       tmp_ULLi;
+#endif
   float               tmp_f;
   double              tmp_d;
 
   void*          tmp_vp;
   const void*    tmp_vCp;
-  char*          tmp_cp; 
-  const char*    tmp_cCp; 
+  char*          tmp_cp;
+  const char*    tmp_cCp;
   int*           tmp_ip;
   float*         tmp_fp;
   const float*   tmp_fCp;
   double*        tmp_dp;
   const double*  tmp_dCp;
+#ifndef OPENCL
   long long*     tmp_LLip;
+#else
+  long*          tmp_LLip;
+#endif
 
 #define imm_i 32
 #define imm_i_0_2 0
