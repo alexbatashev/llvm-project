@@ -154,12 +154,16 @@ public:
     InitEE(Filename);
 
     std::unique_ptr<llvm::JITEventListener> Listener(
-        JITEventListener::createIntelJITEventListener(new IntelJITEventsWrapper(
-            NotifyEvent, 0, IsProfilingActive, 0, 0, GetNewMethodID)));
+        JITEventListener::createIntelJITEventListener());
 
     TheJIT->RegisterJITEventListener(Listener.get());
 
     TheJIT->finalizeObject();
+
+    typedef void (*Function)();
+    Function f = reinterpret_cast<Function>(
+            TheJIT->getPointerToNamedFunction("main"));
+    f();
 
     // Destroy the JIT engine instead of unregistering to get unload events.
     DestroyEE();
