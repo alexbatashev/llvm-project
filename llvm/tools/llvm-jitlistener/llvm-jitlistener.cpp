@@ -154,8 +154,7 @@ public:
     InitEE(Filename);
 
     std::unique_ptr<llvm::JITEventListener> Listener(
-        JITEventListener::createIntelJITEventListener(new IntelJITEventsWrapper(
-            NotifyEvent, 0, IsProfilingActive, 0, 0, GetNewMethodID)));
+        JITEventListener::createIntelJITEventListener());
 
     TheJIT->RegisterJITEventListener(Listener.get());
 
