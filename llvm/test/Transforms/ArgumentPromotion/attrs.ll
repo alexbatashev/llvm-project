@@ -4,9 +4,10 @@
 %struct.ss = type { i32, i64 }
 
 ; Don't drop 'byval' on %X here.
-define internal void @f(%struct.ss* byval %b, i32* byval %X, i32 %i) nounwind {
+define internal void @f(%struct.ss* byval %b, i32* byval %X, i32 %i) nounwind !test_metadata !0 {
 ; CHECK-LABEL: define internal void @f(
 ; CHECK: i32 %[[B0:.*]], i64 %[[B1:.*]], i32* byval %X, i32 %i)
+; CHECK: !test_metadata !0
 entry:
 ; CHECK: %[[B:.*]] = alloca %struct.ss
 ; CHECK: %[[B_GEP0:.*]] = getelementptr %struct.ss, %struct.ss* %[[B]], i32 0, i32 0
@@ -50,3 +51,6 @@ entry:
 
   ret i32 0
 }
+
+; CHECK: !0 = !{i32 1}
+!0 = !{i32 1}
